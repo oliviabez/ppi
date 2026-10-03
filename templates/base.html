@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteBio - Plataforma Educacional de Biologia (IFRN)</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="brand">SiteBio</a>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}">Início</a>
+            <a href="{{ url_for('modulo_detail', slug='celula-microscopio') }}">Célula</a>
+            <a href="{{ url_for('modulo_detail', slug='citologia') }}">Citologia</a>
+            <a href="{{ url_for('modulo_detail', slug='dna-cromossomos') }}">DNA</a>
+            <a href="{{ url_for('modulo_detail', slug='metabolismo') }}">Metabolismo</a>
+            <a href="{{ url_for('modulo_detail', slug='continuidade') }}">Continuidade</a>
+            <a href="{{ url_for('modulo_detail', slug='ed-sexual') }}">Ed. Sexual</a>
+            <a href="{{ url_for('modulo_detail', slug='manutencao') }}">Manutenção</a>
+            <a href="{{ url_for('quiz') }}">Quiz</a>
+            <a href="{{ url_for('auth') }}" class="btn-login">Entrar</a>
+        </div>
+    </nav>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container">
+          {% for category, message in messages %}
+            <div style="padding: 0.8rem; background-color: #d4edda; color: #155724; border-radius: 6px; margin-bottom: 1rem;">
+                {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+
+    <footer>
+        <p><strong>SiteBio</strong> - Projeto final de PPI Biologia IFRN</p>
+        <p>Integrantes: Lívia Maria | Maria Antônia | Olívia Bezerra</p>
+    </footer>
+</body>
+</html>

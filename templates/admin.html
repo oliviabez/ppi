@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: var(--primary);">Painel do Administrador</h1>
+    <p>Recursos de gestão para melhoria contínua dos conteúdos do SiteBio.</p>
+
+    <div class="about-section">
+        <h3>Ações Administrativas</h3>
+        <ul>
+            <li><strong>Cadastrar conteúdo:</strong> Publicar artigos de bioquímica, mitos da alimentação e educação sexual.</li>
+            <li><strong>Editar / Excluir:</strong> Atualizar materiais antigos ou desatualizados.</li>
+            <li><strong>Gerenciar PDFs e Imagens:</strong> Upload de arquivos didáticos complementares.</li>
+            <li><strong>Gerenciar Quizzes:</strong> Criar e editar perguntas e gabaritos.</li>
+        </ul>
+    </div>
+
+    <div class="about-section" style="margin-top: 1.5rem;">
+        <h3>Feedbacks Recebidos</h3>
+        {% if feedbacks %}
+            <ul>
+            {% for fb in feedbacks %}
+                <li>{{ fb }}</li>
+            {% endfor %}
+            </ul>
+        {% else %}
+            <p>Nenhum feedback registrado até o momento.</p>
+        {% endif %}
+    </div>
+
+    <div class="about-section" style="margin-top: 1.5rem;">
+        <h3>Usuários Cadastrados</h3>
+        {% if users %}
+            <table>
+                <tr><th>Nome</th><th>E-mail</th><th>Perfil</th></tr>
+                {% for u in users %}
+                <tr><td>{{ u.name }}</td><td>{{ u.email }}</td><td>{{ u.role }}</td></tr>
+                {% endfor %}
+            </table>
+        {% else %}
+            <p>Nenhum usuário cadastrado nesta sessão.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

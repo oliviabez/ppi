@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h1 style="color: var(--primary);">QUIZZES - Teste seus conhecimentos</h1>
+    <p>Responda, veja sua pontuação e acompanhe seu desempenho no conteúdo de Biologia.</p>
+
+    {% if score %}
+        <div style="background: #d4edda; padding: 1.5rem; border-radius: 8px; margin-bottom: 2rem;">
+            <h2>Resultado do Quiz</h2>
+            <p>Você acertou <strong>{{ score.hits }}</strong> de <strong>{{ score.total }}</strong> perguntas (<strong>{{ score.percent }}%</strong> de aproveitamento).</p>
+            <a href="{{ url_for('quiz') }}" class="btn-primary" style="text-decoration:none;">Tentar Novamente</a>
+        </div>
+    {% endif %}
+
+    <form action="{{ url_for('quiz') }}" method="POST" class="about-section">
+        {% for q in questions %}
+            <div style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem;">
+                <h4>Pergunta {{ loop.index }} de {{ questions|length }}</h4>
+                <p><strong>{{ q.question }}</strong></p>
+                {% for opt in q.options %}
+                    {% set letter = ['A', 'B', 'C', 'D'][loop.index0] %}
+                    <div>
+                        <label>
+                            <input type="radio" name="q_{{ q.id }}" value="{{ letter }}" required>
+                            <strong>{{ letter }}.</strong> {{ opt }}
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn-primary">Enviar Respostas</button>
+    </form>
+</div>
+{% endblock %}
