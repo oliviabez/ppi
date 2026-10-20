@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, cta_quiz %}
+{% block title %}Célula e Microscópio - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Biologia celular · Parte 1', 'Teoria Celular e Organelas', 'Material de estudo.', 'banner-celula.jpg', 'Ilustração de uma célula com núcleo, mitocôndrias e complexo de Golgi') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">O que diz a Teoria Celular</h3>
+                    <p>A Teoria Celular estabelece que a célula é a unidade morfológica e funcional de todos os seres vivos, e que toda célula surge, necessariamente, a partir da divisão de uma célula que já existia antes. Hoje essa ideia parece óbvia, mas só foi construída depois de muitas observações ao longo de quase dois séculos, reunindo o trabalho de vários cientistas.</p>
+                    <p>A única exceção geralmente apontada são os vírus: por não possuírem organização celular, muitos autores nem os classificam como seres vivos, embora dependam totalmente de células para se multiplicar.</p>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Como a teoria foi construída</h3>
+                    <p>Tudo começou em 1665, quando Robert Hooke observou ao microscópio um fino corte de cortiça e percebeu pequenas cavidades organizadas lado a lado, parecidas com um favo de mel. Ele as chamou de <em>cellula</em>, palavra latina que significa "pequeno compartimento". Como analisava tecido vegetal morto, Hooke enxergou apenas paredes celulares vazias.</p>
+                    <p>Quase dois séculos depois, o botânico Matthias Schleiden e o zoólogo Theodor Schwann, de forma independente, concluíram que todos os seres vivos são formados por células — o ponto de partida da Teoria Celular propriamente dita. Restava saber de onde vêm as novas células: o médico Rudolf Virchow defendeu que uma célula só pode se originar da divisão de outra célula preexistente, nunca por geração espontânea.</p>
+
+                    <div class="quote-box shadow-sm">
+                        <strong class="quote-title">“Omnis cellula ex cellula”</strong>
+                        <span>“Toda célula origina-se de outra célula.”</span>
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Os três postulados fundamentais</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bio">
+                        <thead>
+                            <tr>
+                                <th style="width: 30%;">Postulado</th>
+                                <th>Significado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. Unidade morfológica</strong></td>
+                                <td>Todos os seres vivos são formados por células e por estruturas que derivam delas — as células dão forma e estrutura ao corpo.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. Unidade funcional</strong></td>
+                                <td>É dentro das células que ocorrem os processos essenciais à vida, como produção de energia, síntese de proteínas e eliminação de resíduos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. Continuidade celular</strong></td>
+                                <td>Toda célula se origina exclusivamente de outra célula preexistente, por meio de divisão celular.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Por que a função é chamada de "morfológica"?</h3>
+                    <p>Morfologia é o estudo da forma e da estrutura dos seres vivos. Dizer que a célula tem função morfológica significa que ela é a unidade física básica que constrói e dá forma ao corpo — assim como tijolos determinam o formato de uma casa, as células determinam o formato, o tamanho e a organização de tecidos e órgãos. Por isso, células com funções diferentes têm formatos distintos:</p>
+                    <ul>
+                        <li><strong>Neurônios:</strong> alongados e ramificados, o que favorece a condução de impulsos elétricos por longas distâncias.</li>
+                        <li><strong>Hemácias:</strong> em formato de disco bicôncavo, o que aumenta a superfície de contato para o transporte de oxigênio.</li>
+                        <li><strong>Células musculares:</strong> alongadas e elásticas, o que permite a contração e o relaxamento dos músculos.</li>
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Seres unicelulares e pluricelulares</h3>
+                    <p>Organismos unicelulares, como muitas bactérias e protozoários, realizam todas as funções vitais em uma única célula. Os pluricelulares reúnem duas ou mais células que trabalham de forma integrada e especializada, seguindo uma hierarquia:</p>
+                    <div class="formula-box">
+                        Células especializadas &rarr; Tecidos &rarr; Órgãos &rarr; Sistemas
+                    </div>
+                    <ul>
+                        <li><strong>Especialização celular:</strong> diferentes linhagens assumem funções específicas.</li>
+                        <li><strong>Tecidos:</strong> grupos de células especializadas formam tecidos, como o epitelial, muscular e nervoso.</li>
+                        <li><strong>Órgãos e sistemas:</strong> os tecidos formam órgãos, que se articulam em sistemas responsáveis por manter a homeostase.</li>
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Divisão celular: crescer, regenerar e reproduzir</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bio">
+                        <thead>
+                            <tr>
+                                <th>Processo</th>
+                                <th>O que faz</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Mitose</strong></td>
+                                <td>Gera duas células-filhas geneticamente idênticas à célula-mãe. Responsável pelo crescimento e substituição de tecidos.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Meiose</strong></td>
+                                <td>Reduz o número de cromossomos pela metade, originando quatro células haploides (gametas). Essencial para a reprodução sexuada.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">E os vírus?</h3>
+                    <p>Os vírus não possuem organização celular, o que leva parte dos cientistas a não os considerar seres vivos. Ainda assim, dependem inteiramente de células para se multiplicar: são parasitas intracelulares obrigatórios.</p>
+                </article>
+
+                <div class="callout"><strong>Ligação com Educação Sexual:</strong> O zigoto, primeira célula de um novo ser humano, nasce da fusão de dois gametas e se multiplica por mitose: o "Omnis cellula ex cellula" na prática.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{ cta_quiz() }}
+{% endblock %}

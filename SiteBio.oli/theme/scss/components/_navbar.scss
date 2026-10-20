@@ -1,0 +1,72 @@
+#mainNav {
+    background-color: fade-out($secondary, 0.1);
+    font-family: $headings-font-family;
+
+    .navbar-brand {
+        color: $primary;
+    }
+
+    .navbar-nav {
+        .nav-item {
+            .nav-link {
+                color: fade-out($white, 0.3);
+
+                font-weight: 800;
+            }
+
+            &.active {
+                .nav-link {
+                    color: $primary;
+                }
+            }
+        }
+    }
+
+    // Menu suspenso "Conteúdos"
+    .dropdown-menu {
+        background-color: fade-out($secondary, 0.03);
+        border: 1px solid fade-out($primary, 0.7);
+        border-radius: 0.5rem;
+        padding: 0.5rem 0;
+        margin-top: 0.75rem;
+
+        .dropdown-item {
+            color: fade-out($white, 0.2);
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            padding: 0.55rem 1.25rem;
+
+            &:hover,
+            &:focus {
+                background-color: fade-out($primary, 0.85);
+                color: $primary;
+            }
+
+            &.active {
+                background-color: fade-out($primary, 0.8);
+                color: $primary;
+            }
+        }
+    }
+
+    @media (min-width: 992px) {
+        .navbar-nav {
+            .nav-item {
+                .nav-link {
+                    font-size: 0.9rem;
+
+                    &:hover {
+                        color: fade-out($white, 0.6);
+                    }
+                }
+
+                &.active {
+                    .nav-link:hover {
+                        color: $primary;
+                    }
+                }
+            }
+        }
+    }
+}
