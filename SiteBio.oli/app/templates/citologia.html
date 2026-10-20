@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, cta_quiz %}
+{% block title %}Citologia - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Biologia celular · Parte 2', 'Organelas Citoplasmáticas e Citologia', 'Retículo endoplasmático, complexo de Golgi, lisossomos e o transporte através da membrana.', 'banner-citologia.jpg', 'Ilustração da membrana plasmática com proteínas de canal') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">O que é uma organela?</h3>
+                    <p>Organelas são estruturas presentes no citoplasma das células que executam funções específicas necessárias à sobrevivência da célula, dividindo tarefas como produção de energia, síntese de substâncias e digestão intracelular.</p>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Retículo Endoplasmático (RE): o sistema de produção</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bio">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Características e Funções</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>RE Rugoso (granular)</strong></td>
+                                <td>Sacos achatados com ribossomos presos à superfície. Produz proteínas de secreção (como insulina), proteínas da membrana plasmática e enzimas lisossômicas.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>RE Liso (agranular)</strong></td>
+                                <td>Rede de túbulos sem ribossomos. Síntese de lipídios (hormônios esteroides como testosterona e progesterona), desintoxicação celular e armazenamento de cálcio.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Complexo de Golgi: o centro logístico da célula</h3>
+                    <p>Formado por sáculos achatados (dictiossomos). Possui a <strong>face cis</strong> (recebe vesículas do RE) e a <strong>face trans</strong> (de onde brotam vesículas de secreção e lisossomos).</p>
+                    <ul>
+                        <li><strong>Secreção celular:</strong> empacota substâncias e libera por exocitose.</li>
+                        <li><strong>Formação do acrossomo:</strong> bolsa de enzimas na cabeça do espermatozoide.</li>
+                        <li><strong>Síntese de polissacarídeos:</strong> produz componentes da parede celular vegetal.</li>
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Lisossomos e a digestão intracelular</h3>
+                    <p>Vesículas com cerca de 40 tipos de hidrolases ácidas (pH 4,5 a 5,0). Atuam via:</p>
+                    <ul>
+                        <li><strong>Heterofagia:</strong> digestão de material vindo do meio externo (fagocitose/pinocitose).</li>
+                        <li><strong>Autofagia:</strong> reciclagem de organelas envelhecidas da própria célula.</li>
+                        <li><strong>Autólise:</strong> destruição programada da célula (ex: regressão da cauda do girino).</li>
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Comparativo: Célula Vegetal x Célula Animal</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bio">
+                        <thead>
+                            <tr>
+                                <th>Estrutura</th>
+                                <th>Célula Vegetal</th>
+                                <th>Célula Animal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Parede celular</strong></td><td>Presente (Celulose)</td><td>Ausente</td></tr>
+                            <tr><td><strong>Cloroplastos</strong></td><td>Presentes</td><td>Ausentes</td></tr>
+                            <tr><td><strong>Vacúolo central</strong></td><td>Presente (Grande)</td><td>Ausente</td></tr>
+                            <tr><td><strong>Lisossomos</strong></td><td>Ausentes</td><td>Presentes</td></tr>
+                            <tr><td><strong>Centríolos</strong></td><td>Ausentes na maioria</td><td>Presentes</td></tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Transporte através da Membrana Plasmática</h3>
+                    <div class="table-responsive">
+                    <table class="table table-bio">
+                        <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Como funciona</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><strong>Difusão simples</strong></td><td>Passivo. Moléculas pequenas (O₂, CO₂) atravessam a bicamada a favor do gradiente.</td></tr>
+                            <tr><td><strong>Difusão facilitada</strong></td><td>Passivo. Moléculas maiores (glicose) usam permeases e canais proteicos.</td></tr>
+                            <tr><td><strong>Osmose</strong></td><td>Passivo. Deslocamento da água do meio hipotônico para o hipertônico.</td></tr>
+                            <tr><td><strong>Transporte ativo</strong></td><td>Ativo (gasta ATP). Contra o gradiente. Ex: Bomba de Sódio e Potássio (Na⁺/K⁺).</td></tr>
+                        </tbody>
+                    </table>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+
+{{ cta_quiz() }}
+{% endblock %}

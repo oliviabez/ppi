@@ -1,0 +1,135 @@
+// Páginas de conteúdo (célula, citologia, DNA, ...)
+
+.content-block {
+    margin-bottom: 1.75rem;
+
+    p:last-child,
+    ul:last-child {
+        margin-bottom: 0;
+    }
+
+    ul li {
+        margin-bottom: 0.35rem;
+
+        &::marker {
+            color: $accent-dark;
+        }
+    }
+
+    strong {
+        color: darken($secondary, 3%);
+    }
+}
+
+.section-title {
+    font-family: $headings-font-family;
+    text-transform: uppercase;
+    font-weight: 300;
+    font-size: clamp(1.25rem, 2.6vw, 1.6rem);
+    line-height: 1.25;
+    color: $secondary;
+    padding-bottom: 0.65rem;
+    margin-bottom: 1.25rem;
+    border-bottom: 2px solid fade-out($secondary, 0.75);
+}
+
+// Citação em destaque ("Omnis cellula ex cellula")
+.quote-box {
+    background-color: fade-out($white, 0.4);
+    border-left: 0.35rem solid $secondary;
+    border-radius: 0 0.5rem 0.5rem 0;
+    padding: 1.25rem 1.5rem;
+    margin: 1.5rem 0;
+
+    .quote-title {
+        display: block;
+        font-family: $headings-font-family;
+        font-weight: 800;
+        font-size: 1.15rem;
+        color: $secondary;
+        margin-bottom: 0.25rem;
+    }
+
+    span {
+        font-style: italic;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// Caixa de fórmula / hierarquia
+.formula-box {
+    background-color: fade-out($white, 0.4);
+    border: 1px solid fade-out($secondary, 0.75);
+    border-radius: 0.5rem;
+    padding: 1rem 1.25rem;
+    margin: 1rem 0;
+    text-align: center;
+    font-family: $headings-font-family;
+    font-weight: 700;
+    color: $secondary;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+// Destaque escuro ("Ligação com Educação Sexual", resultado do quiz)
+.callout {
+    background-color: fade-out($secondary, 0.05);
+    color: lighten($primary, 25%);
+    border-radius: 0.5rem;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1.75rem;
+    border: 1px solid fade-out($primary, 0.55);
+    box-shadow: 0 0.15rem 0.5rem fade-out($black, 0.7);
+
+    strong {
+        color: $primary;
+        font-family: $headings-font-family;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    &.callout-lg {
+        text-align: center;
+        font-family: $headings-font-family;
+        font-weight: 800;
+        font-size: 1.4rem;
+    }
+}
+
+// Tabelas (.table-bio) sobre fundo claro
+.table-bio {
+    --bs-table-bg: transparent;
+    --bs-table-color: #{$body-color};
+    --bs-table-border-color: #{fade-out($secondary, 0.75)};
+    --bs-table-hover-bg: #{fade-out($white, 0.55)};
+    --bs-table-hover-color: #{$body-color};
+    margin-bottom: 0;
+
+    thead th {
+        background-color: $secondary;
+        color: lighten($primary, 20%);
+        font-family: $headings-font-family;
+        font-weight: 800;
+        font-size: 0.8rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        padding: 0.85rem 1rem;
+        border-bottom: 0;
+    }
+
+    tbody td {
+        padding: 0.85rem 1rem;
+        vertical-align: top;
+    }
+}
+
+.table-responsive {
+    border-radius: 0.5rem;
+    border: 1px solid fade-out($secondary, 0.75);
+    background-color: fade-out($white, 0.6);
+}
