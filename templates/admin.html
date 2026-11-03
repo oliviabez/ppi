@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors %}
+{% block title %}Painel do Administrador - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Painel do Administrador', 'Olá, ' ~ primeiro_nome ~ '. Aqui você gerencia os conteúdos e acompanha os feedbacks da comunidade.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-10 col-lg-11 mx-auto">
+
+                <!-- Acompanhamento -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Acompanhamento</h3>
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <tbody>
+                                <tr><td><strong>Estudantes cadastrados</strong></td><td>{{ resumo.usuarios.Estudante }}</td></tr>
+                                <tr><td><strong>Público externo cadastrado</strong></td><td>{{ resumo.usuarios.Publico }}</td></tr>
+                                <tr><td><strong>Administradores</strong></td><td>{{ resumo.usuarios.Admin }}{% if admins %}: {% for a in admins %}{{ a.nome }} ({{ a.email }}){{ '; ' if not loop.last }}{% endfor %}{% endif %}</td></tr>
+                                <tr><td><strong>Feedbacks recebidos</strong></td><td>{{ resumo.feedbacks }}</td></tr>
+                                <tr><td><strong>Comentários / dúvidas de estudantes</strong></td><td>{{ resumo.comentarios }}</td></tr>
+                                <tr><td><strong>Quizzes realizados (média de acertos)</strong></td><td>{{ resumo.tentativas_quiz }}{% if resumo.tentativas_quiz %} ({{ resumo.media_quiz }}%){% endif %}</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+
+                <!-- Cadastrar conteúdo -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Cadastrar Novo Conteúdo</h3>
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.titulo.label(class="form-label") }}
+                            {{ form.titulo(class="form-control") }}
+                            {{ errors(form.titulo) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.tema.label(class="form-label") }}
+                            {{ form.tema(class="form-select") }}
+                            {{ errors(form.tema) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.descricao.label(class="form-label") }}
+                            {{ form.descricao(class="form-control") }}
+                            {{ errors(form.descricao) }}
+                        </div>
+                        <div class="mb-4">
+                            {{ form.texto.label(class="form-label") }}
+                            {{ form.texto(class="form-control", rows=6) }}
+                            {{ errors(form.texto) }}
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="imagens">Imagens (opcional — PNG, JPG, GIF ou WEBP, até 5 MB cada)</label>
+                            <input class="form-control" type="file" id="imagens" name="imagens" accept="image/png,image/jpeg,image/gif,image/webp" multiple />
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label" for="legenda_imagens">Legenda das imagens (opcional)</label>
+                            <input class="form-control" type="text" id="legenda_imagens" name="legenda_imagens" maxlength="200" />
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl") }}
+                    </form>
+                </article>
+
+                <!-- Conteúdos publicados -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Conteúdos publicados</h3>
+                    {% if conteudos %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Título</th><th>Tema</th><th>Publicado em</th><th>Ações</th></tr></thead>
+                            <tbody>
+                                {% for c in conteudos %}
+                                <tr>
+                                    <td><a href="{{ url_for('conteudo', conteudo_id=c.id) }}">{{ c.titulo }}</a></td>
+                                    <td>{{ c.tema|rotulo_tema }}</td>
+                                    <td>{{ c.data_criacao|data_br }}</td>
+                                    <td class="text-nowrap">
+                                        <a class="btn btn-sm btn-secondary" href="{{ url_for('admin_editar', conteudo_id=c.id) }}">Editar</a>
+                                        <form method="POST" action="{{ url_for('admin_excluir', conteudo_id=c.id) }}" class="d-inline" onsubmit="return confirm('Excluir este conteúdo?');">
+                                            {{ acao_form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Nenhum conteúdo publicado ainda.</p>
+                    {% endif %}
+                </article>
+
+                <!-- Conteúdos fixos do site: imagens -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Conteúdos fixos do site</h3>
+                    <p>Edite o texto e adicione ou remova imagens nas páginas de conteúdo que já existem, quando quiser.</p>
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <tbody>
+                                {% for chave, info in paginas_fixas.items() %}
+                                <tr>
+                                    <td>{{ info[1] }}</td>
+                                    <td class="text-nowrap">
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('admin_pagina_editar', chave=chave) }}">Editar conteúdo</a>
+                                        <a class="btn btn-sm btn-secondary" href="{{ url_for('admin_pagina_imagens', chave=chave) }}">Gerenciar imagens</a>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a class="btn btn-primary mt-3" href="{{ url_for('admin_quizzes') }}">Criar / editar quizzes e ver porcentagens</a>
+                </article>
+
+                <!-- Usuários cadastrados -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Usuários cadastrados</h3>
+                    {% for perfil, rotulo in [('Estudante', 'Estudantes'), ('Publico', 'Público externo'), ('Admin', 'Administradores')] %}
+                    <h4 class="h5 mt-3">{{ rotulo }} ({{ usuarios[perfil]|length }})</h4>
+                    {% if usuarios[perfil] %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Nome</th><th>E-mail</th><th>Cadastro</th></tr></thead>
+                            <tbody>
+                                {% for u in usuarios[perfil] %}
+                                <tr><td>{{ u.nome }}</td><td>{{ u.email }}</td><td>{{ u.data_cadastro|data_br if u.data_cadastro else '—' }}</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Nenhum cadastrado.</p>
+                    {% endif %}
+                    {% endfor %}
+                </article>
+
+                <!-- Feedbacks -->
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Feedbacks e comentários recebidos</h3>
+                    {% if feedbacks %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Data</th><th>Autor</th><th>Tipo</th><th>Assunto</th><th>Mensagem</th><th>Resposta</th></tr></thead>
+                            <tbody>
+                                {% for f in feedbacks %}
+                                <tr>
+                                    <td class="text-nowrap">{{ f.data|data_br }}</td>
+                                    <td>{{ f.autor.nome if f.autor else '—' }}{% if f.autor %}<br><small>{{ f.autor.perfil|rotulo_perfil }}</small>{% endif %}</td>
+                                    <td>{{ 'Comentário' if f.tipo == 'Comentario' else 'Feedback' }}</td>
+                                    <td>{{ f.tema|rotulo_tema }}</td>
+                                    <td style="white-space: pre-line;">{{ f.texto|censurar }}</td>
+                                    <td>
+                                        {% if f.tipo == 'Comentario' %}
+                                        {% set rs = respostas.get(f.id, []) %}
+                                        {% if rs %}<small>{{ rs|length }} resposta(s)</small><br>{% endif %}
+                                        <a class="btn btn-sm btn-primary" href="{{ url_for('admin_responder', comentario_id=f.id) }}">{{ 'Responder de novo' if rs else 'Responder' }}</a>
+                                        {% else %}—{% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Nenhum feedback recebido ainda.</p>
+                    {% endif %}
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

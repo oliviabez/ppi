@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Plano de estudos - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Estudante', 'Plano de estudos da semana', 'Um roteiro rápido com todos os conteúdos. Os temas em que você mais errou ganham tempo extra.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {% if enfase %}
+                <div class="callout" role="note"><strong>Ênfase desta semana:</strong>
+                    {% for t in enfase %}{{ t|rotulo_tema }}{{ ', ' if not loop.last }}{% endfor %}
+                    — foram os temas em que você mais errou. Eles aparecem com <strong>Reforço</strong> e +20 min.</div>
+                {% else %}
+                <div class="callout" role="note">Faça alguns quizzes para o plano dar ênfase aos conteúdos em que você tem mais dúvidas. Por enquanto este é o plano padrão.</div>
+                {% endif %}
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Dia</th><th>O que estudar</th><th>Fechamento</th></tr></thead>
+                            <tbody>
+                                {% for d in dias %}
+                                <tr>
+                                    <td><strong>{{ d.dia }}</strong></td>
+                                    <td>
+                                        {% for it in d.itens %}
+                                        <div class="mb-2">
+                                            {% if it.rota %}<a href="{{ url_for(it.rota) }}">{{ it.titulo }}</a>{% else %}<a href="{{ url_for('conteudo', conteudo_id=it.conteudo_id) }}">{{ it.titulo }}</a>{% endif %}
+                                            &middot; {{ it.minutos }} min
+                                            {% if it.reforco %}<span class="badge-reforco">Reforço</span>{% endif %}
+                                        </div>
+                                        {% endfor %}
+                                        {% for t in d.extras %}
+                                        <div class="mb-2"><span class="badge-reforco">Reforço</span> 15 min: refazer o quiz de <a href="{{ url_for('quiz', tema=t) }}">{{ t|rotulo_tema }}</a></div>
+                                        {% endfor %}
+                                    </td>
+                                    <td>{{ d.fechamento }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="small mt-3 mb-0">Dica: anote 3 dúvidas por dia e envie em <a href="{{ url_for('feedback') }}">Comentários e Feedback</a>.</p>
+                </article>
+                <a class="btn btn-primary" href="{{ url_for('meus_erros') }}">Ver meus erros</a>
+                <a class="btn btn-secondary ms-2" href="{{ url_for('quiz') }}">Fazer um quiz</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

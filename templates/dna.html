@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, cta_quiz, galeria, secoes_editadas, conteudos_do_tema %}
+{% block title %}DNA e Cromossomos - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Módulo 1 · Biologia molecular', 'DNA e Cromossomos', 'A bioquímica da informação genética: estrutura molecular, nucleotídeos, dupla hélice e compactação cromossômica.', 'banner-dna.jpg', 'Ilustração da dupla hélice de DNA') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+{% if secoes_pagina %}{{ secoes_editadas(secoes_pagina) }}{% else %}
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">1. A natureza química do DNA e dos ácidos nucleicos</h3>
+                    <p>Os ácidos nucleicos (DNA e RNA) são polímeros de nucleotídeos, cada um composto por:</p>
+                    <ul>
+                        <li><strong>Grupo fosfato (PO₄³⁻):</strong> confere caráter ácido e carga negativa.</li>
+                        <li><strong>Pentose:</strong> Desoxirribose (C₅H₁₀O₄) no DNA e Ribose (C₅H₁₀O₅) no RNA.</li>
+                        <li><strong>Bases nitrogenadas:</strong> Púricas (Adenina e Guanina) e Pirimídicas (Citosina, Timina no DNA / Uracila no RNA).</li>
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">2. A dupla hélice e a regra de Chargaff</h3>
+                    <p>Modelo tridimensional de Watson, Crick e Rosalind Franklin: fita dupla antiparalela. A regra de Chargaff estabelece que em fita dupla: <strong>%A = %T</strong> e <strong>%C = %G</strong>.</p>
+                    <div class="formula-box">
+                        <strong>A = T</strong> (unidas por 2 pontes de hidrogênio)<br>
+                        <strong>C ≡ G</strong> (unidas por 3 pontes de hidrogênio — mais estáveis ao calor)
+                    </div>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">3. Empacotamento do DNA</h3>
+                    <p>O DNA humano (2 metros) enrola-se em octâmeros de proteínas básicas (<strong>histonas</strong>, ricas em lisina e arginina de carga positiva), formando a unidade básica chamada <strong>nucleossomo</strong>.</p>
+                    <ul>
+                        <li><strong>Eucromatina:</strong> região descompactada, ativa e acessível para transcrição.</li>
+                        <li><strong>Heterocromatina:</strong> região densamente compactada e inativa no momento.</li>
+                    </ul>
+                </article>
+{% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+{{ conteudos_do_tema(conteudos_tema) }}
+{{ galeria(imagens_pagina) }}
+{% if usuario_logado.perfil != 'Admin' %}{{ cta_quiz('DNA') }}{% endif %}
+{% endblock %}

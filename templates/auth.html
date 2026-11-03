@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import errors %}
+{% block title %}Entrar - SiteBio IFRN{% endblock %}
+
+{% block content %}
+<section class="page-section mt-4" id="login">
+    <div class="container">
+        {% if mostrar_demo %}
+        {# ATENÇÃO: aviso de DEMONSTRAÇÃO. Só aparece no modo sem banco. Remova antes de entregar/publicar. #}
+        <div class="callout mb-4" role="note">
+            <strong>Modo demonstração (sem banco de dados).</strong> Contas de teste:
+            <br>Administrador: <code>admin@sitebio.com</code> / <code>admin123</code>
+            &middot; Estudante: <code>aluno@sitebio.com</code> / <code>aluno123</code>
+            &middot; Público externo: <code>publico@sitebio.com</code> / <code>publico123</code>
+        </div>
+        {% endif %}
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="content-block bg-faded rounded p-4 p-lg-5 h-100">
+                    <p class="auth-boas-vindas mb-1">Plataforma educacional de Biologia &middot; IFRN</p>
+                    <h3 class="section-title">Entrar no SiteBio</h3>
+                    <form method="POST" novalidate>
+                        {{ login_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ login_form.email.label(class="form-label") }}
+                            {{ login_form.email(class="form-control", placeholder="seu@email.com", autocomplete="email") }}
+                            {{ errors(login_form.email) }}
+                        </div>
+                        <div class="mb-4">
+                            {{ login_form.senha.label(class="form-label") }}
+                            {{ login_form.senha(class="form-control", autocomplete="current-password") }}
+                            {{ errors(login_form.senha) }}
+                        </div>
+                        {{ login_form.submit(class="btn btn-primary btn-xl w-100") }}
+                    </form>
+                    <p class="text-center mt-3 mb-0"><a href="{{ url_for('esqueci_senha') }}">Esqueci minha senha</a></p>
+                    <p class="text-center mt-3 mb-0">Ainda não tem conta? <a href="{{ url_for('cadastro') }}">Fazer cadastro</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

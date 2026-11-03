@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors, gerenciador_imagens %}
+{% block title %}Editar conteúdo - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Editar conteúdo', '', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.titulo.label(class="form-label") }}
+                            {{ form.titulo(class="form-control") }}
+                            {{ errors(form.titulo) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.tema.label(class="form-label") }}
+                            {{ form.tema(class="form-select") }}
+                            {{ errors(form.tema) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.descricao.label(class="form-label") }}
+                            {{ form.descricao(class="form-control") }}
+                            {{ errors(form.descricao) }}
+                        </div>
+                        <div class="mb-4">
+                            {{ form.texto.label(class="form-label") }}
+                            {{ form.texto(class="form-control", rows=10) }}
+                            {{ errors(form.texto) }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl", value='Salvar alterações') }}
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin') }}">Cancelar</a>
+                    </form>
+                </article>
+                {{ gerenciador_imagens(imagens, url_for('admin_imagens_conteudo', conteudo_id=conteudo.id), acao_form) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

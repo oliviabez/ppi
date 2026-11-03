@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Quizzes - {{ tema|rotulo_tema }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Quizzes', tema|rotulo_tema, 'Escolha um quiz deste conteúdo.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            {% for item in quizzes %}
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card">
+                    <span class="content-card-number">{{ '%02d'|format(loop.index) }}</span>
+                    <h3 class="content-card-title">{{ item.q.titulo|titulo_quiz }}</h3>
+                    <p>{{ item.n }} {{ 'pergunta' if item.n == 1 else 'perguntas' }}</p>
+                    <a href="{{ url_for('quiz_dinamico', quiz_id=item.q.id) }}" class="btn btn-primary mt-auto">Fazer o quiz &rarr;</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-lg-8"><div class="callout text-center">Ainda não há quizzes neste conteúdo.</div></div>
+            {% endfor %}
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Estude antes</h3>
+                    <ul class="mb-3">
+                        {% for rota, titulo in paginas %}<li><a href="{{ url_for(rota) }}">{{ titulo }}</a></li>{% endfor %}
+                        {% for c in publicados %}<li><a href="{{ url_for('conteudo', conteudo_id=c.id) }}">{{ c.titulo }}</a></li>{% endfor %}
+                    </ul>
+                    <a class="btn btn-secondary" href="{{ url_for('quiz') }}">&larr; Todos os conteúdos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

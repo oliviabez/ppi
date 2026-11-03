@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, revisao %}
+{% block title %}{{ quiz.titulo|titulo_quiz }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero(quiz.tema|rotulo_tema, quiz.titulo|titulo_quiz, 'Responda todas as perguntas e envie.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {% if aviso %}<div class="callout" role="alert">{{ aviso }}</div>{% endif %}
+                {% if resultado %}
+                <div class="callout callout-lg" role="status">
+                    {{ resultado }}
+                    {% if salvo %}<br><small>Seu resultado foi registrado no seu desempenho.</small>{% endif %}
+                </div>
+                {% endif %}
+                {% if detalhes %}{{ revisao(detalhes) }}{% endif %}
+
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    {% if not perguntas %}
+                    <p class="mb-0">Este quiz ainda não tem perguntas.</p>
+                    {% else %}
+                    <form method="POST" novalidate>
+                        {{ acao_form.hidden_tag() }}
+                        {% for p in perguntas %}
+                        <fieldset class="quiz-question">
+                            <span class="quiz-label">{{ loop.index }}. {{ p.enunciado }}</span>
+                            {% for letra, texto in [('A', p.opcao_a), ('B', p.opcao_b), ('C', p.opcao_c), ('D', p.opcao_d)] %}
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="q{{ p.id }}" id="q{{ p.id }}{{ letra }}" value="{{ letra }}" {{ 'checked' if marcadas.get(p.id) == letra }}>
+                                <label class="form-check-label" for="q{{ p.id }}{{ letra }}">{{ texto }}</label>
+                            </div>
+                            {% endfor %}
+                        </fieldset>
+                        {% endfor %}
+                        <button type="submit" class="btn btn-primary btn-xl w-100">Enviar Respostas</button>
+                        <a class="btn btn-secondary mt-3" href="{{ url_for('quiz_tema', tema=quiz.tema) }}">&larr; Quizzes deste conteúdo</a>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}{{ 'Editar' if quiz else 'Novo' }} quiz - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Editar quiz' if quiz else 'Novo quiz', 'Mesma estrutura do quiz padrão: cada pergunta tem 4 alternativas (A–D) e uma resposta correta.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {% if erros %}
+                <div class="callout" role="alert">{% for e in erros %}<div>{{ e }}</div>{% endfor %}</div>
+                {% endif %}
+                <form method="POST" novalidate id="form-quiz">
+                    {{ acao_form.hidden_tag() }}
+                    <input type="hidden" name="total" id="total" value="{{ perguntas|length }}" />
+                    <article class="content-block bg-faded rounded p-4 p-lg-5">
+                        <div class="mb-3">
+                            <label class="form-label" for="titulo">Título do quiz</label>
+                            <input class="form-control" id="titulo" name="titulo" maxlength="200" value="{{ titulo }}" />
+                        </div>
+                        <div class="mb-0">
+                            <label class="form-label" for="tema">Conteúdo deste quiz</label>
+                            <select class="form-select" id="tema" name="tema">
+                                {% for valor, rotulo in [('Célula','Célula e Microscópio'),('Citologia','Citologia'),('DNA','DNA e Cromossomos'),('Metabolismo','Metabolismo e Continuidade'),('EducacaoSexual','Educação Sexual')] %}
+                                <option value="{{ valor }}" {{ 'selected' if valor == tema }}>{{ rotulo }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </article>
+
+                    <div id="perguntas">
+                    {% for p in perguntas %}
+                    {% set i = loop.index %}
+                    <div class="quiz-question bloco-pergunta" data-i="{{ i }}">
+                        <input type="hidden" name="p{{ i }}_id" value="{{ p.id or '' }}" />
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="quiz-label mb-0 num-pergunta">Pergunta</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-remover">Remover</button>
+                        </div>
+                        <textarea class="form-control mb-2" name="p{{ i }}_enunciado" rows="2" maxlength="1000" placeholder="Enunciado">{{ p.enunciado }}</textarea>
+                        {% for letra in ['a','b','c','d'] %}
+                        <div class="input-group mb-1">
+                            <span class="input-group-text">
+                                <input class="form-check-input mt-0 me-2" type="radio" name="p{{ i }}_correta" value="{{ letra|upper }}" {{ 'checked' if p.resposta_correta == letra|upper }} aria-label="Alternativa {{ letra|upper }} é a correta" />
+                                {{ letra|upper }}
+                            </span>
+                            <input class="form-control" name="p{{ i }}_{{ letra }}" maxlength="200" value="{{ p['opcao_' ~ letra] }}" placeholder="Alternativa {{ letra|upper }}" />
+                        </div>
+                        {% endfor %}
+                        <div class="form-text">Marque o círculo da alternativa correta.</div>
+                    </div>
+                    {% endfor %}
+                    </div>
+
+                    <button type="button" class="btn btn-secondary mb-4" id="add-pergunta">+ Adicionar pergunta</button>
+                    <div>
+                        <button type="submit" class="btn btn-primary btn-xl">Salvar quiz</button>
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin_quiz_tema', tema=tema) }}">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var box = document.getElementById('perguntas'), total = document.getElementById('total');
+    function renumerar() {
+        box.querySelectorAll('.bloco-pergunta').forEach(function (b, n) {
+            b.querySelector('.num-pergunta').textContent = 'Pergunta ' + (n + 1);
+        });
+    }
+    function ligar(b) {
+        b.querySelector('.btn-remover').addEventListener('click', function () {
+            if (box.querySelectorAll('.bloco-pergunta').length > 1) { b.remove(); renumerar(); }
+        });
+    }
+    box.querySelectorAll('.bloco-pergunta').forEach(ligar);
+    document.getElementById('add-pergunta').addEventListener('click', function () {
+        var blocos = box.querySelectorAll('.bloco-pergunta');
+        if (blocos.length >= 30) return;
+        var i = parseInt(total.value, 10) + 1;
+        var novo = blocos[0].cloneNode(true);
+        novo.dataset.i = i;
+        novo.querySelectorAll('[name]').forEach(function (el) {
+            el.name = el.name.replace(/^p\d+_/, 'p' + i + '_');
+            if (el.type === 'radio') el.checked = false;
+            else el.value = '';
+            if (el.tagName === 'TEXTAREA') el.value = '';
+        });
+        novo.querySelector('[name$="_id"]').value = '';
+        box.appendChild(novo);
+        total.value = i;
+        ligar(novo);
+        renumerar();
+    });
+    renumerar();
+})();
+</script>
+{% endblock %}

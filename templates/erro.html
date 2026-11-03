@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}{{ titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Erro ' ~ codigo, titulo, mensagem, 'about.jpg', '') }}
+<section class="page-section mt-4">
+    <div class="container text-center">
+        <a class="btn btn-primary btn-xl" href="{{ url_for('index') }}">Voltar ao início</a>
+    </div>
+</section>
+{% endblock %}

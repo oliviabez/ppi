@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, cta_quiz, galeria %}
+{% block title %}{{ conteudo.titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero(conteudo.tema|rotulo_tema, conteudo.titulo, conteudo.descricao or '', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <p class="small"><em>Publicado em {{ conteudo.data_criacao|data_br }}</em></p>
+                    {# O texto é escapado automaticamente (seguro contra XSS); pre-line preserva as quebras de linha. #}
+                    <div style="white-space: pre-line;">{{ conteudo.texto }}</div>
+                    {% if imagens %}<div class="row g-3 mt-3">{% for img in imagens %}<div class="col-md-6"><figure class="m-0"><img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem do conteúdo' }}" loading="lazy" />{% if img.legenda %}<figcaption class="small mt-1"><em>{{ img.legenda }}</em></figcaption>{% endif %}</figure></div>{% endfor %}</div>{% endif %}
+                    <a class="btn btn-secondary mt-4" href="{{ url_for('modalidades') if usuario_logado.perfil != 'Admin' else url_for('admin') }}">&larr; Voltar</a>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% if usuario_logado.perfil != 'Admin' %}{{ cta_quiz(conteudo.tema) }}{% endif %}
+{% endblock %}

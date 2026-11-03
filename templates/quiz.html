@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Quizzes - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Teste seus conhecimentos', 'Quizzes', 'Escolha um conteúdo para ver os quizzes dele.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            {% for tema, rotulo in temas %}
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card">
+                    <span class="content-card-number">{{ '%02d'|format(loop.index) }}</span>
+                    <h3 class="content-card-title">{{ rotulo }}</h3>
+                    <p>{{ contagem[tema] }} {{ 'quiz' if contagem[tema] == 1 else 'quizzes' }} neste conteúdo.</p>
+                    <a href="{{ url_for('quiz_tema', tema=tema) }}" class="btn btn-primary mt-auto">Abrir &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

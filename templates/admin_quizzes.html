@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Quizzes (admin) - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Quizzes', 'Cada quadrinho é um conteúdo. Abra para criar vários quizzes, editar, excluir e ver as porcentagens (do conjunto de estudantes, sem dados pessoais).', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            {% for c in cartoes %}
+            <div class="col-md-6 col-lg-4">
+                <div class="content-card">
+                    <span class="content-card-number">{{ '%02d'|format(loop.index) }}</span>
+                    <h3 class="content-card-title">{{ c.rotulo }}</h3>
+                    <p>{{ c.n }} {{ 'quiz' if c.n == 1 else 'quizzes' }}<br>
+                       {{ c.tentativas }} {{ 'tentativa' if c.tentativas == 1 else 'tentativas' }}{% if c.media is not none %} &middot; média de acertos {{ c.media }}%{% endif %}</p>
+                    <a href="{{ url_for('admin_quiz_tema', tema=c.tema) }}" class="btn btn-primary mt-auto">Abrir &rarr;</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

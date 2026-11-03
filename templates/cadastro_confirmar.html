@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors %}
+{% block title %}Confirmar e-mail - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Acesso à plataforma', 'Confirme seu e-mail', 'Enviamos um código de 6 números para o e-mail informado. Digite-o abaixo para ativar sua conta.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row g-4 justify-content-center">
+            <div class="col-lg-5">
+                <div class="content-block bg-faded rounded p-4 p-lg-5 h-100">
+                    <h3 class="section-title">Código de confirmação</h3>
+                    {% if email_modo_dev %}
+                    <div class="callout" role="note"><strong>Modo desenvolvimento.</strong> O e-mail não está configurado: o código foi impresso no terminal do servidor.</div>
+                    {% endif %}
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", autocomplete="email") }}
+                            {{ errors(form.email) }}
+                        </div>
+                        <div class="mb-4">
+                            {{ form.codigo.label(class="form-label") }}
+                            {{ form.codigo(class="form-control", placeholder="000000", inputmode="numeric", autocomplete="one-time-code", maxlength="7") }}
+                            {{ errors(form.codigo) }}
+                        </div>
+                        {{ form.submit(class="btn btn-secondary btn-xl w-100") }}
+                    </form>
+                    <form method="POST" action="{{ url_for('cadastro_reenviar') }}" class="mt-3 text-center">
+                        {{ reenviar_form.hidden_tag() }}
+                        <input type="hidden" name="reenv-email" value="{{ form.email.data or '' }}" />
+                        <button type="submit" class="btn btn-link">Não recebi: reenviar código</button>
+                    </form>
+                    <p class="text-center mb-0"><a href="{{ url_for('cadastro') }}">Corrigir o e-mail</a> &middot; <a href="{{ url_for('auth') }}">Voltar para o login</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, gerenciador_imagens %}
+{% block title %}Imagens - {{ titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Imagens: ' ~ titulo, 'Estas imagens aparecem no final da página de conteúdo (sem alterar o texto que já existe).', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {{ gerenciador_imagens(imagens, url_for('admin_pagina_imagens', chave=chave), acao_form) }}
+                <a class="btn btn-secondary" href="{{ url_for('admin') }}">&larr; Voltar ao painel</a>
+                <a class="btn btn-primary ms-2" href="{{ url_for(rota) }}">Ver a página</a>
+                <a class="btn btn-secondary ms-2" href="{{ url_for('admin_pagina_editar', chave=chave) }}">Editar o texto</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

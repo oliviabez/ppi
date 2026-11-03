@@ -1,0 +1,175 @@
+{# Macros compartilhadas pelas páginas internas #}
+
+{# Cabeçalho de página interna: banner + caixa sobreposta (layout "about-heading" do modelo) #}
+{% macro hero(upper, lower, text='', img='about.jpg', alt='') %}
+<section class="page-section about-heading mb-4">
+    <div class="container">
+        <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="{{ url_for('static', filename='assets/img/' ~ img) }}" alt="{{ alt }}" />
+        <div class="about-heading-content">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10 mx-auto">
+                    <div class="bg-faded rounded p-5">
+                        <h2 class="section-heading {{ 'mb-4' if text else 'mb-0' }}">
+                            <span class="section-heading-upper">{{ upper }}</span>
+                            <span class="section-heading-lower">{{ lower }}</span>
+                        </h2>
+                        {% if text %}<p class="mb-0">{{ text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endmacro %}
+
+{# Mensagens de erro de validação de um campo WTForms #}
+{% macro errors(field) %}
+    {% for erro in field.errors %}
+    <div class="field-error">{{ erro }}</div>
+    {% endfor %}
+{% endmacro %}
+
+{# Faixa de chamada para o quiz, no fim das páginas de conteúdo #}
+{% macro cta_quiz(tema=None) %}
+<section class="page-section cta">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <div class="cta-inner bg-faded text-center rounded">
+                    <h2 class="section-heading mb-4">
+                        <span class="section-heading-upper">Terminou a leitura?</span>
+                        <span class="section-heading-lower">Teste o que aprendeu</span>
+                    </h2>
+                    <p class="mb-4">{% if tema %}Responda aos quizzes deste conteúdo e veja quantas perguntas você acerta.{% else %}Responda ao quiz de Biologia Celular e veja quantas perguntas você acerta.{% endif %}</p>
+                    <a class="btn btn-primary btn-xl" href="{{ url_for('quiz', tema=tema) if tema else url_for('quiz') }}">{{ 'Fazer os quizzes do conteúdo' if tema else 'Fazer o quiz' }}</a>
+                    <a class="btn btn-secondary btn-xl ms-lg-2 mt-2 mt-lg-0" href="{{ url_for('feedback') }}">Enviar feedback</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endmacro %}
+
+
+{# NOVO · Galeria de imagens que o administrador anexou a um conteúdo #}
+{% macro galeria(imagens) %}
+{% if imagens %}
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Imagens</h3>
+                    <div class="row g-3">
+                        {% for img in imagens %}
+                        <div class="col-md-6">
+                            <figure class="m-0">
+                                <img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem do conteúdo' }}" loading="lazy" />
+                                {% if img.legenda %}<figcaption class="small mt-1"><em>{{ img.legenda }}</em></figcaption>{% endif %}
+                            </figure>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endmacro %}
+
+{# NOVO · Revisão das respostas do quiz: mostra só o que errou (sem porcentagem) #}
+{% macro revisao(detalhes) %}
+{% set erros = detalhes|rejectattr('acertou')|list %}
+<div class="content-block bg-faded rounded p-4 p-lg-5 mb-4">
+    <h3 class="section-title">Suas respostas</h3>
+    {% if not erros %}
+    <p class="mb-0"><strong>Você não errou nenhuma pergunta.</strong> Continue assim!</p>
+    {% else %}
+    <p>Você errou {{ erros|length }} {{ 'pergunta' if erros|length == 1 else 'perguntas' }}. Veja o que marcou e a resposta certa:</p>
+    {% for d in erros %}
+    <div class="quiz-question quiz-errada">
+        <span class="quiz-label">{{ d.numero }}. {{ d.enunciado }}</span>
+        <p class="mb-1"><span class="badge-erro">Sua resposta</span> {{ d.marcada }}) {{ d.marcada_texto }}</p>
+        <p class="mb-0"><span class="badge-certo">Resposta certa</span> {{ d.correta }}) {{ d.correta_texto }}</p>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+{% endmacro %}
+
+{# NOVO · Gerenciador de imagens (admin): lista com botão de remover + envio de novas #}
+{% macro gerenciador_imagens(imagens, upload_url, acao_form) %}
+<article class="content-block bg-faded rounded p-4 p-lg-5">
+    <h3 class="section-title">Imagens</h3>
+    {% if imagens %}
+    <div class="row g-3 mb-4">
+        {% for img in imagens %}
+        <div class="col-md-4">
+            <img class="img-fluid rounded mb-2" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem' }}" />
+            {% if img.legenda %}<div class="small"><em>{{ img.legenda }}</em></div>{% endif %}
+            <form method="POST" action="{{ url_for('admin_imagem_excluir', imagem_id=img.id) }}" onsubmit="return confirm('Remover esta imagem?');">
+                {{ acao_form.hidden_tag() }}
+                <button type="submit" class="btn btn-sm btn-outline-danger mt-1">Remover</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p>Nenhuma imagem ainda.</p>
+    {% endif %}
+    <form method="POST" action="{{ upload_url }}" enctype="multipart/form-data">
+        {{ acao_form.hidden_tag() }}
+        <div class="mb-3">
+            <label class="form-label" for="imagens-up">Adicionar imagens (PNG, JPG, GIF ou WEBP — até 5 MB cada)</label>
+            <input class="form-control" type="file" id="imagens-up" name="imagens" accept="image/png,image/jpeg,image/gif,image/webp" multiple />
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="legenda-up">Legenda (opcional, vale para as imagens deste envio)</label>
+            <input class="form-control" type="text" id="legenda-up" name="legenda_imagens" maxlength="200" />
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar imagens</button>
+    </form>
+</article>
+{% endmacro %}
+
+
+{# NOVO · Texto de uma página fixa editado pelo administrador (mesmo visual das seções originais) #}
+{% macro secoes_editadas(secoes) %}
+{% for s in secoes %}
+<article class="content-block bg-faded rounded p-4 p-lg-5">
+    <h3 class="section-title">{{ s.titulo }}</h3>
+    {{ s.html|safe }}
+</article>
+{% endfor %}
+{% endmacro %}
+
+{# NOVO · Conteúdos publicados pelo admin que pertencem ao tema da página (centralizados) #}
+{% macro conteudos_do_tema(lista) %}
+{% if lista %}
+<section class="page-section mt-4" id="mais-conteudos">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Mais conteúdos deste tema</h3>
+                    <div class="row g-4 justify-content-center">
+                        {% for c in lista %}
+                        <div class="col-md-6">
+                            <div class="content-card">
+                                <span class="content-card-number">{{ 'Novo' if c.data_criacao|recente else 'Conteúdo' }}</span>
+                                <h3 class="content-card-title">{{ c.titulo }}</h3>
+                                <p>{{ c.descricao or (c.texto[:110] ~ ('…' if c.texto|length > 110 else '')) }}</p>
+                                <p class="small mb-3"><em>{{ c.data_criacao|data_br }}</em></p>
+                                <a href="{{ url_for('conteudo', conteudo_id=c.id) }}" class="btn btn-primary mt-auto">Ler conteúdo &rarr;</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endmacro %}

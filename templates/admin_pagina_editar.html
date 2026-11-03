@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Editar conteúdo - {{ titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Editar: ' ~ titulo, 'Altere os títulos e os textos de cada seção. O que você salvar passa a aparecer para todos os usuários.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {% if erro %}<div class="callout" role="alert">{{ erro }}</div>{% endif %}
+                <div class="callout" role="note">
+                    {% if editado %}<strong>Esta página está com o texto editado.</strong>{% else %}Esta página ainda está com o texto original.{% endif %}
+                    O texto aceita estas marcações: <code>&lt;p&gt;</code> parágrafo, <code>&lt;strong&gt;</code> negrito, <code>&lt;em&gt;</code> itálico, <code>&lt;ul&gt;&lt;li&gt;</code> lista, <code>&lt;br&gt;</code> quebra de linha, <code>&lt;a href="..."&gt;</code> link e tabelas. Outras marcações, scripts e eventos são removidos ao salvar.
+                </div>
+                <form method="POST" novalidate>
+                    {{ acao_form.hidden_tag() }}
+                    <input type="hidden" name="total" id="total" value="{{ secoes|length }}" />
+                    <div id="secoes">
+                    {% for s in secoes %}
+                    {% set i = loop.index %}
+                    <article class="content-block bg-faded rounded p-4 p-lg-5 bloco-secao">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <span class="quiz-label mb-0 num-secao">Seção</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger btn-remover">Remover seção</button>
+                        </div>
+                        <label class="form-label">Título da seção</label>
+                        <input class="form-control mb-3" name="u{{ i }}_titulo" maxlength="200" value="{{ s.titulo }}" />
+                        <label class="form-label">Texto</label>
+                        <textarea class="form-control" name="u{{ i }}_html" rows="10" spellcheck="true">{{ s.html }}</textarea>
+                    </article>
+                    {% endfor %}
+                    </div>
+                    <button type="button" class="btn btn-secondary mb-4" id="add-secao">+ Adicionar seção</button>
+                    <div>
+                        <button type="submit" class="btn btn-primary btn-xl">Salvar</button>
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for(rota) }}">Ver a página</a>
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin') }}">Voltar ao painel</a>
+                    </div>
+                </form>
+                {% if editado %}
+                <form method="POST" action="{{ url_for('admin_pagina_restaurar', chave=chave) }}" class="mt-4" onsubmit="return confirm('Apagar a edição e voltar ao texto original?');">
+                    {{ acao_form.hidden_tag() }}
+                    <button type="submit" class="btn btn-outline-danger">Restaurar o texto original</button>
+                </form>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+    var box = document.getElementById('secoes'), total = document.getElementById('total');
+    function renumerar() {
+        box.querySelectorAll('.bloco-secao').forEach(function (b, n) {
+            b.querySelector('.num-secao').textContent = 'Seção ' + (n + 1);
+        });
+    }
+    function ligar(b) {
+        b.querySelector('.btn-remover').addEventListener('click', function () {
+            if (box.querySelectorAll('.bloco-secao').length > 1 && confirm('Remover esta seção?')) { b.remove(); renumerar(); }
+        });
+    }
+    box.querySelectorAll('.bloco-secao').forEach(ligar);
+    document.getElementById('add-secao').addEventListener('click', function () {
+        var blocos = box.querySelectorAll('.bloco-secao');
+        if (blocos.length >= 30) return;
+        var i = parseInt(total.value, 10) + 1;
+        var novo = blocos[0].cloneNode(true);
+        novo.querySelectorAll('[name]').forEach(function (el) {
+            el.name = el.name.replace(/^u\d+_/, 'u' + i + '_');
+            el.value = '';
+        });
+        novo.querySelector('textarea').textContent = '';
+        box.appendChild(novo);
+        total.value = i;
+        ligar(novo);
+        renumerar();
+    });
+    renumerar();
+})();
+</script>
+{% endblock %}

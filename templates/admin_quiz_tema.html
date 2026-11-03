@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Quizzes - {{ tema|rotulo_tema }} (admin) - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita · Quizzes', tema|rotulo_tema, 'Crie quantos quizzes quiser para este conteúdo.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-10 col-lg-11 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Quizzes deste conteúdo</h3>
+                    <a class="btn btn-primary mb-3" href="{{ url_for('admin_quiz_novo', tema=tema) }}">+ Criar novo quiz neste conteúdo</a>
+                    {% if quizzes %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Quiz</th><th>Perguntas</th><th>Tentativas</th><th>Média de acertos</th><th>Ações</th></tr></thead>
+                            <tbody>
+                                {% for item in quizzes %}
+                                <tr>
+                                    <td>{{ item.q.titulo }}</td>
+                                    <td>{{ item.n }}</td>
+                                    <td>{{ item.stat.tentativas if item.stat else 0 }}</td>
+                                    <td>{{ item.stat.media ~ '%' if item.stat else '—' }}</td>
+                                    <td class="text-nowrap">
+                                        <a class="btn btn-sm btn-secondary" href="{{ url_for('admin_quiz_editar', quiz_id=item.q.id) }}">Editar</a>
+                                        <form method="POST" action="{{ url_for('admin_quiz_excluir', quiz_id=item.q.id) }}" class="d-inline" onsubmit="return confirm('Excluir este quiz?');">
+                                            {{ acao_form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Ainda não há quizzes neste conteúdo.</p>
+                    {% endif %}
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Conteúdos deste tema</h3>
+                    <ul class="mb-0">
+                        {% for rota, titulo in paginas %}<li><a href="{{ url_for(rota) }}">{{ titulo }}</a></li>{% endfor %}
+                        {% for c in publicados %}<li><a href="{{ url_for('conteudo', conteudo_id=c.id) }}">{{ c.titulo }}</a></li>{% endfor %}
+                    </ul>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Acerto por pergunta (mais difíceis primeiro)</h3>
+                    {% if por_pergunta %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Quiz</th><th>Pergunta</th><th>Respostas</th><th>Acerto</th></tr></thead>
+                            <tbody>
+                                {% for p in por_pergunta %}
+                                <tr><td>{{ p.quiz }}</td><td>{{ p.enunciado }}</td><td>{{ p.respostas }}</td><td>{{ p.acerto }}%</td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Ainda não há respostas de estudantes.</p>
+                    {% endif %}
+                </article>
+                <a class="btn btn-secondary" href="{{ url_for('admin_quizzes') }}">&larr; Todos os conteúdos</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero %}
+{% block title %}Meus erros - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Estudante', 'Meus erros e dúvidas', 'Veja o que você errou nos quizzes e em quais conteúdos precisa reforçar.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Onde você tem mais dúvidas</h3>
+                    {% if duvidas %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Conteúdo</th><th>Erros</th><th>Perguntas respondidas</th><th></th></tr></thead>
+                            <tbody>
+                                {% for d in duvidas %}
+                                <tr>
+                                    <td>{{ d.tema|rotulo_tema }}{% if loop.first and d.erros %} <strong>&larr; mais dúvidas</strong>{% endif %}</td>
+                                    <td>{{ d.erros }}</td><td>{{ d.respondidas }}</td>
+                                    <td class="text-nowrap"><a class="btn btn-sm btn-primary" href="{{ url_for('quiz', tema=d.tema) }}">Refazer quiz</a></td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a class="btn btn-secondary mt-3" href="{{ url_for('plano_estudos') }}">Ver meu plano de estudos</a>
+                    {% else %}
+                    <p class="mb-0">Você ainda não fez nenhum quiz. <a href="{{ url_for('quiz') }}">Fazer o quiz</a></p>
+                    {% endif %}
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Perguntas que você errou</h3>
+                    {% if erros %}
+                    {% for e in erros %}
+                    <div class="quiz-question quiz-errada">
+                        <span class="quiz-label">{{ e.enunciado }}</span>
+                        <p class="small mb-1"><em>{{ e.tema|rotulo_tema }} &middot; {{ e.quiz_titulo|titulo_quiz }} &middot; {{ e.data|data_br }}</em></p>
+                        <p class="mb-1"><span class="badge-erro">Sua resposta</span> {{ e.marcada }}) {{ e.marcada_texto }}</p>
+                        <p class="mb-0"><span class="badge-certo">Resposta certa</span> {{ e.correta }}) {{ e.correta_texto }}</p>
+                    </div>
+                    {% endfor %}
+                    {% else %}
+                    <p class="mb-0">Nenhum erro registrado. Bom trabalho!</p>
+                    {% endif %}
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

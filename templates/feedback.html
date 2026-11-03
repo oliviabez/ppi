@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors %}
+{% block title %}Feedback - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Participe', 'Editar mensagem' if editando else 'Comentários e Feedback', '', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">{{ 'Editar mensagem' if editando else 'Enviar mensagem' }}</h3>
+                    {% if usuario_logado.perfil == 'Publico' %}
+                    <p>Como público externo você pode enviar <strong>feedbacks</strong>. Eles ajudam a equipe a melhorar os conteúdos.</p>
+                    {% else %}
+                    <p>Como estudante você pode enviar <strong>feedbacks</strong> e <strong>comentários / dúvidas</strong> sobre os conteúdos. Os administradores respondem aqui e avisam você por e-mail.</p>
+                    <p><a class="btn btn-sm btn-secondary" href="{{ url_for('contato_admin') }}">Tenho algo mais específico: escrever por e-mail</a></p>
+                    {% endif %}
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.tipo.label(class="form-label") }}
+                                {{ form.tipo(class="form-select") }}
+                                {{ errors(form.tipo) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.tema.label(class="form-label") }}
+                                {{ form.tema(class="form-select") }}
+                                {{ errors(form.tema) }}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            {{ form.texto.label(class="form-label") }}
+                            {{ form.texto(class="form-control", rows=5, maxlength=500) }}
+                            <div class="form-text">Máximo de 500 caracteres.</div>
+                            {{ errors(form.texto) }}
+                            {% if previa %}<div class="previa-bloqueada mt-2" style="white-space: pre-line;">{{ previa }}</div>{% endif %}
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl", value='Salvar alterações' if editando else 'Enviar') }}
+                        {% if editando %}<a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('feedback') }}">Cancelar</a>{% endif %}
+                    </form>
+                </article>
+
+                {% if not editando %}
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Minhas mensagens</h3>
+                    {% if meus_envios %}
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Data</th><th>Tipo</th><th>Assunto</th><th>Mensagem</th><th>Ações</th></tr></thead>
+                            <tbody>
+                                {% for e in meus_envios %}
+                                <tr>
+                                    <td>{{ e.data|data_br }}</td>
+                                    <td>{{ 'Comentário' if e.tipo == 'Comentario' else 'Feedback' }}</td>
+                                    <td>{{ e.tema|rotulo_tema }}</td>
+                                    <td style="white-space: pre-line;">{{ e.texto|censurar }}
+                                        {% for r in respostas.get(e.id, []) %}<div class="resposta-admin mt-2"><strong>Resposta de {{ r.admin_nome }}</strong> <small>({{ r.data|data_br }})</small><br>{{ r.texto|censurar }}</div>{% endfor %}
+                                    </td>
+                                    <td class="text-nowrap">
+                                        <a class="btn btn-sm btn-secondary" href="{{ url_for('feedback_editar', comentario_id=e.id) }}">Editar</a>
+                                        <form method="POST" action="{{ url_for('feedback_excluir', comentario_id=e.id) }}" class="d-inline" onsubmit="return confirm('Excluir esta mensagem?');">
+                                            {{ acao_form.hidden_tag() }}
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Você ainda não enviou nenhuma mensagem.</p>
+                    {% endif %}
+                </article>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

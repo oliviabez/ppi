@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors %}
+{% block title %}Meu cadastro - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Minha conta', 'Meu cadastro', 'Perfil: ' ~ (usuario_logado.perfil|rotulo_perfil) ~ ' · Cadastrado em ' ~ (usuario_logado.data_cadastro|data_br), 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Atualizar cadastro</h3>
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.nome.label(class="form-label") }}
+                            {{ form.nome(class="form-control") }}
+                            {{ errors(form.nome) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control") }}
+                            {{ errors(form.email) }}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                {{ form.senha_nova.label(class="form-label") }}
+                                {{ form.senha_nova(class="form-control", autocomplete="new-password") }}
+                                {{ errors(form.senha_nova) }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                {{ form.confirmar_nova.label(class="form-label") }}
+                                {{ form.confirmar_nova(class="form-control", autocomplete="new-password") }}
+                                {{ errors(form.confirmar_nova) }}
+                            </div>
+                        </div>
+                        <div class="mb-4">
+                            {{ form.senha_atual.label(class="form-label") }}
+                            {{ form.senha_atual(class="form-control", autocomplete="current-password") }}
+                            {{ errors(form.senha_atual) }}
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl") }}
+                    </form>
+                </article>
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Excluir minha conta</h3>
+                    <p>Esta ação apaga seu cadastro{% if usuario_logado.perfil != 'Admin' %}, suas mensagens e seus resultados de quiz{% endif %} e não pode ser desfeita.</p>
+                    <form method="POST" action="{{ url_for('perfil_excluir') }}" onsubmit="return confirm('Tem certeza? Esta ação não pode ser desfeita.');" novalidate>
+                        {{ excluir_form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ excluir_form.senha_atual.label(class="form-label") }}
+                            {{ excluir_form.senha_atual(class="form-control", autocomplete="current-password") }}
+                        </div>
+                        {{ excluir_form.submit(class="btn btn-outline-danger") }}
+                    </form>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

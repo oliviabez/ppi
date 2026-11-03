@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% from '_macros.html' import hero, errors %}
+{% block title %}Responder dúvida - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Responder dúvida', 'A resposta fica salva no site e o estudante é avisado por e-mail.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Dúvida do estudante</h3>
+                    <p class="small mb-1"><strong>{{ autor.nome if autor else 'Conta excluída' }}</strong> &middot; {{ item.tema|rotulo_tema }} &middot; {{ item.data|data_br }}</p>
+                    <div style="white-space: pre-line;">{{ item.texto|censurar }}</div>
+                </article>
+
+                {% if respostas %}
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Respostas já enviadas</h3>
+                    {% for r in respostas %}
+                    <div class="quiz-question">
+                        <p class="small mb-1"><strong>{{ r.admin_nome }}</strong> &middot; {{ r.data|data_br }}</p>
+                        <div style="white-space: pre-line;">{{ r.texto|censurar }}</div>
+                    </div>
+                    {% endfor %}
+                </article>
+                {% endif %}
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Nova resposta</h3>
+                    {% if email_modo_dev %}
+                    <div class="callout" role="note"><strong>Modo desenvolvimento.</strong> O e-mail para o estudante será impresso no terminal do servidor.</div>
+                    {% endif %}
+                    <form method="POST" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-4">
+                            {{ form.texto.label(class="form-label") }}
+                            {{ form.texto(class="form-control", rows=6, maxlength=1000) }}
+                            <div class="form-text">Máximo de 1000 caracteres. O estudante poderá responder o e-mail direto para você.</div>
+                            {{ errors(form.texto) }}
+                            {% if previa %}<div class="previa-bloqueada mt-2" style="white-space: pre-line;">{{ previa }}</div>{% endif %}
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl") }}
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin') }}">Voltar ao painel</a>
+                    </form>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
