@@ -1,0 +1,84 @@
+// Página inicial: busca e cartões de conteúdo
+
+.search-box {
+    max-width: 640px;
+
+    .form-control {
+        font-family: $font-family-base;
+    }
+}
+
+.search-chip {
+    font-family: $headings-font-family;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border: 1px solid fade-out($secondary, 0.6);
+    background: fade-out($white, 0.5);
+    color: $secondary;
+    border-radius: 2rem;
+    padding: 0.3rem 0.85rem;
+    margin: 0.15rem;
+    cursor: pointer;
+    transition: background-color 0.15s ease-in-out, color 0.15s ease-in-out;
+
+    &:hover,
+    &:focus-visible {
+        background: $secondary;
+        color: lighten($primary, 20%);
+    }
+}
+
+.content-card {
+    background-color: lighten($primary, 25%);
+    border-radius: 0.5rem;
+    padding: 1.75rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 0.2rem 0.6rem fade-out($black, 0.75);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 0.6rem 1.2rem fade-out($black, 0.6);
+    }
+
+    &::before {
+        content: '';
+        position: absolute;
+        inset: 0.5rem;
+        border: 2px solid fade-out($secondary, 0.82);
+        border-radius: 0.35rem;
+        pointer-events: none;
+    }
+
+    .content-card-number {
+        font-family: $headings-font-family;
+        font-size: 2.75rem;
+        font-weight: 100;
+        line-height: 1;
+        color: $accent-dark;
+    }
+
+    .content-card-title {
+        font-family: $headings-font-family;
+        font-size: 1.05rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+        color: $secondary;
+        margin: 0.5rem 0 0.75rem;
+    }
+
+    p {
+        font-size: 0.95rem;
+        flex-grow: 1;
+    }
+}
+
+.no-results {
+    display: none;
+}
