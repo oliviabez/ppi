@@ -1,2 +1,2 @@
 [tool.vercel]
-ponto de entrada = "app:app"
+entrypoint = "app:app"
