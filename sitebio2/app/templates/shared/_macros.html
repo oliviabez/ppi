@@ -1,0 +1,216 @@
+{# Macros compartilhadas pelas páginas internas #}
+
+{# Cabeçalho de página interna: banner + caixa sobreposta (layout "about-heading" do modelo) #}
+{% macro hero(upper, lower, text='', img='about.jpg', alt='') %}
+<section class="page-section about-heading mb-4">
+    <div class="container">
+        <img class="img-fluid rounded about-heading-img mb-3 mb-lg-0" src="{{ url_for('static', filename='assets/img/' ~ img) }}" alt="{{ alt }}" />
+        <div class="about-heading-content">
+            <div class="row">
+                <div class="col-xl-9 col-lg-10 mx-auto">
+                    <div class="bg-faded rounded p-5">
+                        <h2 class="section-heading {{ 'mb-4' if text else 'mb-0' }}">
+                            <span class="section-heading-upper">{{ upper }}</span>
+                            <span class="section-heading-lower">{{ lower }}</span>
+                        </h2>
+                        {% if text %}<p class="mb-0">{{ text }}</p>{% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endmacro %}
+
+{# Mensagens de erro de validação de um campo WTForms #}
+{% macro errors(field) %}
+    {% for erro in field.errors %}
+    <div class="field-error">{{ erro }}</div>
+    {% endfor %}
+{% endmacro %}
+
+{# Faixa de chamada para o quiz, no fim das páginas de conteúdo #}
+{% macro cta_quiz(tema=None) %}
+<section class="page-section cta">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 mx-auto">
+                <div class="cta-inner bg-faded text-center rounded">
+                    <h2 class="section-heading mb-4">
+                        <span class="section-heading-upper">Terminou a leitura?</span>
+                        <span class="section-heading-lower">Teste o que aprendeu</span>
+                    </h2>
+                    <p class="mb-4">{% if tema %}Responda aos quizzes deste conteúdo e veja quantas perguntas você acerta.{% else %}Responda ao quiz de Biologia Celular e veja quantas perguntas você acerta.{% endif %}</p>
+                    <a class="btn btn-primary btn-xl" href="{{ url_for('quiz.quiz', tema=tema) if tema else url_for('quiz.quiz') }}">{{ 'Fazer os quizzes do conteúdo' if tema else 'Fazer o quiz' }}</a>
+                    <a class="btn btn-secondary btn-xl ms-lg-2 mt-2 mt-lg-0" href="{{ url_for('feedback.feedback') }}">Enviar feedback</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endmacro %}
+
+
+{# Imagens que o administrador anexou e que o texto NÃO citou com [imagem N]: ficam centralizadas no final #}
+{% macro galeria(imagens) %}
+{% if imagens %}
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Imagens</h3>
+                    <div class="galeria-centralizada">
+                        {% for img in imagens %}
+                        <figure class="figura-conteudo">
+                            <img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem do conteúdo' }}" loading="lazy" />
+                            {% if img.legenda %}<figcaption class="small mt-1"><em>{{ img.legenda }}</em></figcaption>{% endif %}
+                        </figure>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endmacro %}
+
+{# Revisão do quiz: mostra o que o aluno marcou em cada pergunta e a resposta certa (sem porcentagem) #}
+{% macro revisao(detalhes) %}
+{% set erros = detalhes|rejectattr('acertou')|list %}
+<div class="content-block bg-faded rounded p-4 p-lg-5 mb-4">
+    <h3 class="section-title">Suas respostas</h3>
+    {% if not erros %}
+    <p><strong>Você não errou nenhuma pergunta.</strong> Continue assim!</p>
+    {% else %}
+    <p>Você errou {{ erros|length }} {{ 'pergunta' if erros|length == 1 else 'perguntas' }}. Veja abaixo o que marcou e a resposta certa de cada uma.</p>
+    {% endif %}
+    {% for d in detalhes %}
+    <div class="quiz-question {{ 'quiz-certa' if d.acertou else 'quiz-errada' }}">
+        <span class="quiz-label">{{ d.numero }}. {{ d.enunciado }}</span>
+        {% if d.acertou %}
+        <p class="mb-0"><span class="badge-certo">Você acertou</span> {{ d.marcada }}) {{ d.marcada_texto }}</p>
+        {% else %}
+        <p class="mb-1"><span class="badge-erro">Sua resposta</span> {{ d.marcada }}) {{ d.marcada_texto }}</p>
+        <p class="mb-0"><span class="badge-certo">Resposta certa</span> {{ d.correta }}) {{ d.correta_texto }}</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% endmacro %}
+
+{# Gerenciador de imagens (admin): miniaturas, remover e enviar novas. O JS (editor-visual.js) envia/remove sem recarregar. #}
+{% macro gerenciador_imagens(imagens, upload_url, acao_form, com_editor=False) %}
+<article class="content-block bg-faded rounded p-4 p-lg-5" id="gerenciador-imagens">
+    <h3 class="section-title">Imagens</h3>
+    {% if com_editor %}
+    <p class="small">Envie as imagens aqui. Depois, no texto, clique no lugar onde quer a imagem e use o botão <strong>Inserir imagem</strong>. As imagens que você não colocar no texto aparecem no final da página.</p>
+    {% else %}
+    <p class="small">Estas imagens aparecem no final da página. Para colocá-las no meio do texto, abra <strong>Editar conteúdo</strong>.</p>
+    {% endif %}
+    <p class="small mb-3 sem-imagens-aviso" {% if imagens %}hidden{% endif %}>Nenhuma imagem ainda.</p>
+    <div class="row g-3 mb-4 justify-content-center lista-imagens">
+        {% for img in imagens %}
+        <div class="col-md-4 text-center card-imagem" data-img="{{ img.id }}">
+            <img class="img-fluid rounded mb-2" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem' }}" />
+            {% if img.legenda %}<div class="small"><em>{{ img.legenda }}</em></div>{% endif %}
+            <form method="POST" action="{{ url_for('admin.admin_imagem_excluir', imagem_id=img.id) }}" class="form-remover-imagem" onsubmit="return confirm('Remover esta imagem?');">
+                {{ acao_form.hidden_tag() }}
+                <button type="submit" class="btn btn-sm btn-outline-danger mt-1">Remover</button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+    <form method="POST" action="{{ upload_url }}" enctype="multipart/form-data" class="form-enviar-imagens">
+        {{ acao_form.hidden_tag() }}
+        <div class="mb-3">
+            <label class="form-label" for="imagens-up">Adicionar imagens (PNG, JPG, GIF ou WEBP — até 5 MB cada)</label>
+            <input class="form-control" type="file" id="imagens-up" name="imagens" accept="image/png,image/jpeg,image/gif,image/webp" multiple />
+        </div>
+        <div class="mb-3">
+            <label class="form-label" for="legenda-up">Legenda (opcional, vale para as imagens deste envio)</label>
+            <input class="form-control" type="text" id="legenda-up" name="legenda_imagens" maxlength="200" />
+        </div>
+        <button type="submit" class="btn btn-primary">Enviar imagens</button>
+        <span class="aviso-imagens ms-2 small" role="status" aria-live="polite"></span>
+    </form>
+</article>
+{% endmacro %}
+
+
+{# NOVO · Texto de uma página fixa editado pelo administrador (mesmo visual das seções originais) #}
+{% macro secoes_editadas(secoes, imagens=[]) %}
+{% for s in secoes %}
+<article class="content-block bg-faded rounded p-4 p-lg-5">
+    <h3 class="section-title">{{ s.titulo }}</h3>
+    {{ s.html|html_com_imagens(imagens) }}
+</article>
+{% endfor %}
+{% endmacro %}
+
+{# NOVO · Conteúdos publicados pelo admin que pertencem ao tema da página (centralizados) #}
+{% macro conteudos_do_tema(lista) %}
+{% if lista %}
+<section class="page-section mt-4" id="mais-conteudos">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <div class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Mais conteúdos deste tema</h3>
+                    <div class="row g-4 justify-content-center">
+                        {% for c in lista %}
+                        <div class="col-md-6">
+                            <div class="content-card">
+                                <span class="content-card-number">{{ 'Novo' if c.data_criacao|recente else 'Conteúdo' }}</span>
+                                <h3 class="content-card-title">{{ c.titulo }}</h3>
+                                <p>{{ c.descricao or (c.texto|resumo(110)) }}</p>
+                                <p class="small mb-3"><em>{{ c.data_criacao|data_br }}</em></p>
+                                <a href="{{ url_for('conteudo.conteudo', conteudo_id=c.id) }}" class="btn btn-primary mt-auto">Ler conteúdo &rarr;</a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+{% endmacro %}
+
+
+{# Editor de texto visual (admin): escreve-se direto na caixa, sem código. modo='html' = com negrito/itálico/lista/link
+   (páginas fixas); modo='texto' = texto simples em parágrafos (conteúdos publicados). O JS fica em static/js/editor-visual.js.
+   'inicial' já vem pronto dos filtros html_para_editor / texto_para_editor. #}
+{% macro editor_texto(nome, inicial, modo='html', imagem=True) %}
+<div class="editor-bloco" data-modo="{{ modo }}">
+    {% if modo == 'html' or imagem %}
+    <div class="editor-barra" role="toolbar" aria-label="Formatação do texto">
+        {% if modo == 'html' %}
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="bold" title="Negrito"><strong>N</strong></button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="italic" title="Itálico"><em>I</em></button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="insertUnorderedList" title="Lista com marcadores">&bull; Lista</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="createLink" title="Transformar o texto selecionado em link">Link</button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" data-cmd="unlink" title="Tirar o link do texto selecionado">Tirar link</button>
+        {% endif %}
+        {% if imagem %}
+        <button type="button" class="btn btn-sm btn-primary" data-acao="imagem" title="Escolher uma imagem para colocar no texto">Inserir imagem</button>
+        {% endif %}
+    </div>
+    {% endif %}
+    <div class="form-control editor-texto" contenteditable="true" spellcheck="true" role="textbox" aria-multiline="true" aria-label="Texto">{{ inicial }}</div>
+    <textarea class="d-none" name="{{ nome }}" tabindex="-1" aria-hidden="true"></textarea>
+</div>
+{% endmacro %}
+
+{# Janela para escolher qual imagem inserir (aparece ao clicar em "Inserir imagem") + lista de imagens para o JS. Use uma vez por página. #}
+{% macro seletor_imagens(imagens) %}
+<script type="application/json" id="dados-imagens">{{ imagens|imagens_json|tojson }}</script>
+<dialog id="dlg-imagens" class="dlg-imagens" aria-label="Escolher imagem">
+    <h4 class="h5">Escolha a imagem</h4>
+    <p class="small sem-imagens" hidden>Nenhuma imagem enviada ainda. Envie em <strong>Imagens</strong>, mais abaixo na página.</p>
+    <div class="grade-imagens"></div>
+    <button type="button" class="btn btn-secondary btn-sm mt-3" data-acao="fechar-imagens">Cancelar</button>
+</dialog>
+{% endmacro %}

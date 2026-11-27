@@ -1,0 +1,75 @@
+{% extends 'shared/base.html' %}
+{% from 'shared/_macros.html' import hero %}
+{% block title %}Plano de estudos - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Estudante', 'Plano de estudos da semana', 'Diga quanto tempo você tem por dia e a hora em que começa: o plano distribui os horários de cada conteúdo. Temas em que você mais errou ganham mais tempo do seu dia.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <h3 class="section-title">Organize o seu tempo</h3>
+                    <form method="GET" class="row g-3 align-items-end">
+                        <div class="col-sm-5">
+                            <label class="form-label" for="minutos">Tempo por dia</label>
+                            <select class="form-select" id="minutos" name="minutos">
+                                {% for m in opcoes_minutos %}<option value="{{ m }}" {{ 'selected' if m == minutos }}>{{ m|duracao }}</option>{% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-sm-4">
+                            <label class="form-label" for="inicio">Começar às</label>
+                            <input class="form-control" type="time" id="inicio" name="inicio" value="{{ inicio }}" required />
+                        </div>
+                        <div class="col-sm-3"><button type="submit" class="btn btn-primary w-100">Montar plano</button></div>
+                    </form>
+                    <p class="small mt-3 mb-0">Total da semana: <strong>{{ total_semana|duracao }}</strong>. Cada dia termina com um fechamento (refazer o quiz). Cada dia usa exatamente o tempo que você escolheu; nos dias com <span class="badge-reforco">Reforço</span> o tema ganha uma fatia maior desse tempo.</p>
+                </article>
+
+                {% if enfase %}
+                <div class="callout" role="note"><strong>Ênfase desta semana:</strong>
+                    {% for t in enfase %}{{ t|rotulo_tema }}{{ ', ' if not loop.last }}{% endfor %}
+                    — foram os temas em que você mais errou. Eles aparecem com <strong>Reforço</strong>,uma fatia maior do tempo e, se couber, quiz extra no domingo.</div>
+                {% else %}
+                <div class="callout" role="note">Faça alguns quizzes para o plano dar ênfase aos conteúdos em que você tem mais dúvidas. Por enquanto este é o plano padrão.</div>
+                {% endif %}
+
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <div class="table-responsive">
+                        <table class="table table-bio">
+                            <thead><tr><th>Dia</th><th>Horário</th><th>O que fazer</th><th>Duração</th></tr></thead>
+                            <tbody>
+                                {% for d in dias %}
+                                {% for p in d.passos %}
+                                <tr>
+                                    {% if loop.first %}<td rowspan="{{ d.passos|length + 1 }}"><strong>{{ d.dia }}</strong><br><small>{{ d.total|duracao }}</small></td>{% endif %}
+                                    <td class="text-nowrap">{{ p.inicio }} – {{ p.fim }}</td>
+                                    <td>
+                                        {% if p.tipo == 'estudo' %}
+                                        {% if p.rota %}<a href="{{ url_for(p.rota) }}">{{ p.titulo }}</a>{% else %}<a href="{{ url_for('conteudo.conteudo', conteudo_id=p.conteudo_id) }}">{{ p.titulo }}</a>{% endif %}
+                                        {% if p.reforco %}<span class="badge-reforco">Reforço</span>{% endif %}
+                                        {% elif p.tipo == 'reforco' %}
+                                        <span class="badge-reforco">Reforço</span> Refazer o quiz de <a href="{{ url_for('quiz.quiz', tema=p.tema) }}">{{ p.tema|rotulo_tema }}</a>
+                                        {% else %}
+                                        {% if p.temas %}Fechamento: refazer o quiz de {% for t in p.temas %}<a href="{{ url_for('quiz.quiz', tema=t) }}">{{ t|rotulo_tema }}</a>{{ ' e ' if not loop.last }}{% endfor %}
+                                        {% else %}Fechamento: revisão geral da semana e <a href="{{ url_for('quiz.quiz') }}">quiz completo</a>{% endif %}
+                                        {% endif %}
+                                    </td>
+                                    <td class="text-nowrap">{{ p.minutos|duracao }}</td>
+                                </tr>
+                                {% endfor %}
+                                <tr class="linha-total"><td colspan="3" class="text-end"><small>Total de {{ d.dia }}</small></td><td class="text-nowrap"><strong>{{ d.total|duracao }}</strong></td></tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="small mt-3 mb-0">Dica: anote 3 dúvidas por dia e envie em <a href="{{ url_for('feedback.feedback') }}">Comentários e Feedback</a>.</p>
+                </article>
+                <a class="btn btn-primary" href="{{ url_for('quiz.meus_erros') }}">Ver meus erros</a>
+                <a class="btn btn-secondary ms-2" href="{{ url_for('quiz.quiz') }}">Fazer um quiz</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

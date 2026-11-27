@@ -1,0 +1,25 @@
+{% extends 'shared/base.html' %}
+{% from 'shared/_macros.html' import hero, cta_quiz, galeria %}
+{% block title %}{{ conteudo.titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero(conteudo.tema|rotulo_tema, conteudo.titulo, conteudo.descricao or '', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <p class="small"><em>Publicado em {{ conteudo.data_criacao|data_br }}{% if usuario_logado.perfil == 'Admin' and conteudo.autor_nome %} por {{ conteudo.autor_nome }}{% endif %}</em></p>
+                    {# O filtro escapa o texto (seguro contra XSS), monta os parágrafos e põe as imagens nos pontos [imagem N]. #}
+                    {{ conteudo.texto|texto_com_imagens(imagens) }}
+                    {# imagens que o texto não citou: centralizadas no final #}
+                    {% if imagens_livres %}<div class="galeria-centralizada mt-3">{% for img in imagens_livres %}<figure class="figura-conteudo"><img class="img-fluid rounded" src="{{ url_for('static', filename='uploads/' ~ img.arquivo) }}" alt="{{ img.legenda or 'Imagem do conteúdo' }}" loading="lazy" />{% if img.legenda %}<figcaption class="small mt-1"><em>{{ img.legenda }}</em></figcaption>{% endif %}</figure>{% endfor %}</div>{% endif %}
+                    <a class="btn btn-secondary mt-4" href="{{ url_for('conteudo.modalidades') if usuario_logado.perfil != 'Admin' else url_for('admin.admin') }}">&larr; Voltar</a>
+                </article>
+            </div>
+        </div>
+    </div>
+</section>
+{% if usuario_logado.perfil != 'Admin' %}{{ cta_quiz(conteudo.tema) }}{% endif %}
+{% endblock %}

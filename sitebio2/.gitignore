@@ -1,0 +1,14 @@
+.env
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+instance/
+.DS_Store
+app/static/uploads/*
+!app/static/uploads/.gitkeep
+migrations/__pycache__/

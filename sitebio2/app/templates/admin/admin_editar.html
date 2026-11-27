@@ -1,0 +1,46 @@
+{% extends 'shared/base.html' %}
+{% from 'shared/_macros.html' import hero, errors, gerenciador_imagens, editor_texto, seletor_imagens %}
+{% block title %}Editar conteúdo - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Editar conteúdo', ('Publicado por ' ~ conteudo.autor_nome ~ ' em ' ~ (conteudo.data_criacao|data_br)) if conteudo.autor_nome else '', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                <article class="content-block bg-faded rounded p-4 p-lg-5">
+                    <form method="POST" class="editor-form" novalidate>
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            {{ form.titulo.label(class="form-label") }}
+                            {{ form.titulo(class="form-control") }}
+                            {{ errors(form.titulo) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.tema.label(class="form-label") }}
+                            {{ form.tema(class="form-select") }}
+                            {{ errors(form.tema) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form.descricao.label(class="form-label") }}
+                            {{ form.descricao(class="form-control") }}
+                            {{ errors(form.descricao) }}
+                        </div>
+                        <div class="mb-4">
+                            <label class="form-label">Texto do conteúdo</label>
+                            {{ editor_texto('texto', texto|texto_para_editor(imagens), 'texto') }}
+                            {% if erro_texto %}<div class="field-error mb-2">{{ erro_texto }}</div>{% endif %}
+                            <p class="form-text mt-1">Escreva normalmente; aperte Enter para um novo parágrafo. Para colocar uma imagem no meio do texto, clique no lugar desejado e use <strong>Inserir imagem</strong>.</p>
+                        </div>
+                        {{ form.submit(class="btn btn-primary btn-xl", value='Salvar alterações') }}
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin.admin') }}">Cancelar</a>
+                    </form>
+                </article>
+                {{ gerenciador_imagens(imagens, url_for('admin.admin_imagens_conteudo', conteudo_id=conteudo.id), acao_form, True) }}
+                {{ seletor_imagens(imagens) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

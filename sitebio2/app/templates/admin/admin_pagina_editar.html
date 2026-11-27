@@ -1,0 +1,106 @@
+{% extends 'shared/base.html' %}
+{% from 'shared/_macros.html' import hero, editor_texto, seletor_imagens, gerenciador_imagens %}
+{% block title %}Editar conteúdo - {{ titulo }} - SiteBio IFRN{% endblock %}
+
+{% block content %}
+{{ hero('Área restrita', 'Editar: ' ~ titulo, 'Altere os títulos, os textos e as imagens. O que você salvar passa a aparecer para todos os usuários.', 'about.jpg', 'Ilustração de células vistas ao microscópio') }}
+
+<section class="page-section mt-4">
+    <div class="container">
+        <div class="row">
+            <div class="col-xl-9 col-lg-10 mx-auto">
+                {% if erro %}<div class="callout" role="alert">{{ erro }}</div>{% endif %}
+                <div class="callout" role="note">
+                    {% if editado %}<strong>Esta página está com o texto editado.</strong>{% else %}Esta página ainda está com o texto original.{% endif %}
+                    Clique no texto e escreva como em um editor comum. Use os botões acima de cada caixa para negrito, itálico, lista e link. Para colocar uma imagem, clique no lugar desejado e use <strong>Inserir imagem</strong>.
+                </div>
+                <form method="POST" class="editor-form" novalidate>
+                    {{ acao_form.hidden_tag() }}
+                    <input type="hidden" name="total" id="total" value="{{ secoes|length }}" />
+                    <div id="secoes">
+                    {% for s in secoes %}
+                    {% set i = loop.index %}
+                    <article class="content-block bg-faded rounded p-4 p-lg-5 bloco-secao">
+                        <div class="d-flex justify-content-end align-items-center mb-2">
+                            <span class="text-nowrap">
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-sobe" title="Mover esta parte para cima">&uarr;</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-desce" title="Mover esta parte para baixo">&darr;</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary btn-abaixo" title="Nova parte logo abaixo">+ Nova parte abaixo</button>
+                                <button type="button" class="btn btn-sm btn-outline-danger btn-remover">Remover</button>
+                            </span>
+                        </div>
+                        <label class="form-label">Título</label>
+                        <input class="form-control mb-3" name="u{{ i }}_titulo" maxlength="200" value="{{ s.titulo }}" />
+                        <label class="form-label">Texto</label>
+                        {{ editor_texto('u' ~ i ~ '_html', s.html|html_para_editor(imagens), 'html') }}
+                    </article>
+                    {% endfor %}
+                    </div>
+                    <div class="mb-4">
+                        <button type="button" class="btn btn-secondary" id="add-secao">+ Adicionar parte no final</button>
+                    </div>
+                    <div>
+                        <button type="submit" class="btn btn-primary btn-xl">Salvar</button>
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for(rota) }}">Ver a página</a>
+                        <a class="btn btn-secondary btn-xl ms-2" href="{{ url_for('admin.admin') }}">Voltar ao painel</a>
+                    </div>
+                </form>
+                {% if editado %}
+                <form method="POST" action="{{ url_for('admin_pagina.admin_pagina_restaurar', chave=chave) }}" class="mt-4" onsubmit="return confirm('Apagar a edição e voltar ao texto original?');">
+                    {{ acao_form.hidden_tag() }}
+                    <button type="submit" class="btn btn-outline-danger">Restaurar o texto original</button>
+                </form>
+                {% endif %}
+                <div class="mt-5">
+                    {{ gerenciador_imagens(imagens, url_for('admin.admin_pagina_imagens', chave=chave), acao_form, True) }}
+                </div>
+                {{ seletor_imagens(imagens) }}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Partes (título + texto) da página: adicionar, remover e mover. O editor de texto em si fica em editor-visual.js.
+(function () {
+    var box = document.getElementById('secoes'), total = document.getElementById('total');
+    function blocos() { return Array.prototype.slice.call(box.querySelectorAll('.bloco-secao')); }
+    // Os nomes (u1_titulo, u1_html...) seguem a ordem da tela; renumera sempre que algo muda.
+    function renumerar() {
+        blocos().forEach(function (b, n) {
+            b.querySelector('input.form-control').name = 'u' + (n + 1) + '_titulo';
+            b.querySelector('textarea').name = 'u' + (n + 1) + '_html';
+        });
+        total.value = blocos().length;
+    }
+    function novaParte() {
+        var novo = blocos()[0].cloneNode(true);
+        novo.querySelector('input.form-control').value = '';
+        novo.querySelector('textarea').value = '';
+        novo.querySelector('.editor-texto').innerHTML = '<p><br></p>';
+        return novo;
+    }
+    box.addEventListener('click', function (e) {
+        var btn = e.target.closest('button'); if (!btn) return;
+        var b = btn.closest('.bloco-secao'); if (!b) return;
+        if (btn.classList.contains('btn-remover')) {
+            if (blocos().length > 1 && confirm('Remover esta parte (título e texto)?')) { b.remove(); renumerar(); }
+        } else if (btn.classList.contains('btn-sobe') && b.previousElementSibling) {
+            box.insertBefore(b, b.previousElementSibling); renumerar();
+        } else if (btn.classList.contains('btn-desce') && b.nextElementSibling) {
+            box.insertBefore(b.nextElementSibling, b); renumerar();
+        } else if (btn.classList.contains('btn-abaixo') && blocos().length < 30) {
+            var n = novaParte(); box.insertBefore(n, b.nextElementSibling); renumerar(); n.querySelector('input.form-control').focus();
+        }
+    });
+    document.getElementById('add-secao').addEventListener('click', function () {
+        if (blocos().length >= 30) return;
+        var n = novaParte(); box.appendChild(n); renumerar(); n.querySelector('input.form-control').focus();
+    });
+    box.closest('form').addEventListener('submit', renumerar);
+    renumerar();
+})();
+</script>
+{% endblock %}
